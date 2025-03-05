@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ContainerComponent } from './container/container.component';
+import { EmployeeComponent } from './employee/employee.component';
 import { RoomsComponent } from "./rooms/rooms.component";
 
 @Component({
   selector: 'app-root',
-  imports: [ ContainerComponent, CommonModule, RoomsComponent ],
+  imports: [ ContainerComponent, CommonModule, EmployeeComponent, RoomsComponent ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
