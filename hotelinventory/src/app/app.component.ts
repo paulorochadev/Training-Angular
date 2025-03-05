@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { RoomsComponent } from "./rooms/rooms.component";
 
 @Component({
@@ -8,10 +8,24 @@ import { RoomsComponent } from "./rooms/rooms.component";
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'hotelinventory';
+export class AppComponent implements OnInit {
+  title = 'hotelinventoryapp';
 
-  role = 'Admin';
+  @ViewChild('name', { static: true }) name!: ElementRef;
+
+  ngOnInit(): void {
+    console.log(this.name.nativeElement.innerText = "Hilton Hotel");
+  }
+
+  // role = 'Admin';
   // role = 'User';
   // role = 'Users';
+
+  // @ViewChild('user', { read: ViewContainerRef } ) vcr!: ViewContainerRef;
+
+  // ngAfterViewInit(): void {
+  //   const componentRef = this.vcr.createComponent(RoomsComponent);
+
+  //   componentRef.instance.numberOfRooms = 50;
+  // }
 }

@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, DoCheck, OnInit } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, DoCheck, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { HeaderComponent } from '../header/header.component';
 import { RoomsListComponent } from "../rooms-list/rooms-list.component";
 import { Room, RoomList } from './rooms';
 
 @Component({
   selector: 'app-rooms',
-  imports: [CommonModule, RoomsListComponent],
+  imports: [CommonModule, HeaderComponent, RoomsListComponent],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.scss'
 })
-export class RoomsComponent implements OnInit, DoCheck {
+export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterViewChecked {
   // Interpolation (Interpolação)
   hotelName = 'Hilton Hotel';
   
@@ -30,9 +31,16 @@ export class RoomsComponent implements OnInit, DoCheck {
 
   roomList: RoomList[] = []
 
+  // @ViewChild(HeaderComponent, { static: true }) headerComponent!: HeaderComponent;
+  @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
+
+  @ViewChildren(HeaderComponent) headerChildrenComponent!: QueryList<HeaderComponent>;
+
   constructor() {}
 
   ngOnInit(): void {
+    // console.log(this.headerComponent);
+
     this.roomList = [
       {
         roomNumber: 1,
@@ -69,6 +77,20 @@ export class RoomsComponent implements OnInit, DoCheck {
 
   ngDoCheck(): void {
     console.log('on changes is called');
+  }
+
+  ngAfterViewInit(): void {
+    // console.log(this.headerComponent);
+    this.headerComponent.title = "Rooms View";
+
+    // console.log(this.headerChildrenComponent.last.title = "Last Title");
+    this.headerChildrenComponent.last.title = "Last Title";
+
+    // this.headerChildrenComponent.get(0)?.title = "First Title";
+  }
+
+  ngAfterViewChecked(): void {
+    this.headerComponent.title = "Rooms View";
   }
   
   // Event Binding (Evento Vinculativo)
