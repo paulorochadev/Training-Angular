@@ -1,22 +1,37 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, Optional, ViewChild } from '@angular/core';
+import { APP_CONFIG, APP_SERVICE_CONFIG } from './AppConfig/appConfig.service';
 import { ContainerComponent } from './container/container.component';
 import { EmployeeComponent } from './employee/employee.component';
+import { LocalStorageToken } from './localstorage.token';
+import { LoggerService } from './logger.service';
 import { RoomsComponent } from "./rooms/rooms.component";
 
 @Component({
   selector: 'app-root',
   imports: [ ContainerComponent, CommonModule, EmployeeComponent, RoomsComponent ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
+  providers: [
+    {
+      provide: APP_SERVICE_CONFIG,
+      useValue: APP_CONFIG
+    }
+  ]
 })
 export class AppComponent implements OnInit {
   title = 'hotelinventoryapp';
 
   @ViewChild('name', { static: true }) name!: ElementRef;
 
+  constructor(@Optional() private loggerService: LoggerService, @Inject(LocalStorageToken) private localStorage: any) { }
+
   ngOnInit(): void {
-    console.log(this.name.nativeElement.innerText = "Hilton Hotel");
+    this.loggerService?.Log('AppComponent.ngOnInit()');
+    this.name.nativeElement.innerText = "Hilton Hotel";
+    // console.log(this.name.nativeElement.innerText = "Hilton Hotel");
+
+    this.localStorage.setItem('name', 'Hilton Hotel');
   }
 
   // role = 'Admin';
