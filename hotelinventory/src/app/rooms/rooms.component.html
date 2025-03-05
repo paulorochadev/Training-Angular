@@ -11,10 +11,9 @@
 
 {{ roomList | json }}
 
-<div *ngIf="rooms.availableRooms > 0">
+<!-- <div *ngIf="rooms.availableRooms > 0">
     Rooms List
-    <!-- {{ roomList }} -->
-
+    {{ roomList }}
     <table>
         <tr>
             <th>Index</th>
@@ -38,10 +37,24 @@
             <td>{{ room.amenities | titlecase }}</td>
             <td>{{ room.checkinTime | date: 'dd/MM/yyyy' }}</td>
             <td>{{ room.checkoutTime | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ room.rating | number : '1.1-2' }}</td>
+            <td>{{ room.rating | number : '1.1-' }}</td>
         </tr>
     </table>
+</div> -->
 
+<div *ngIf="selectedRoom">
+    {{ selectedRoom | json }}
+</div>
+
+<div>
+    <button (click)="addRoom()">Add Room</button>
+</div>
+
+<div *ngIf="rooms.availableRooms > 0">
+    Rooms List
+    <app-rooms-list [rooms]="roomList" [title]="title" (selectedRoom)="selectRoom($event)">
+
+    </app-rooms-list>
 </div>
 
 <button (click)="toggle()">Toggle</button>

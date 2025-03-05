@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
+import { RoomsListComponent } from "../rooms-list/rooms-list.component";
 import { Room, RoomList } from './rooms';
 
 @Component({
   selector: 'app-rooms',
-  imports: [ CommonModule ],
+  imports: [CommonModule, RoomsListComponent],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.scss'
 })
-export class RoomsComponent implements OnInit {
+export class RoomsComponent implements OnInit, DoCheck {
   // Interpolation (Interpolação)
   hotelName = 'Hilton Hotel';
   
@@ -17,11 +18,15 @@ export class RoomsComponent implements OnInit {
 
   hideRooms = false;
 
+  selectedRoom!: RoomList;
+
   rooms: Room = {
     availableRooms: 10,
     bookedRooms: 5,
     totalRooms: 20
   }
+
+  title = 'Room List';
 
   roomList: RoomList[] = []
 
@@ -61,9 +66,35 @@ export class RoomsComponent implements OnInit {
       },
     ]
   }
+
+  ngDoCheck(): void {
+    console.log('on changes is called');
+  }
   
   // Event Binding (Evento Vinculativo)
   toggle() {
     this.hideRooms = !this.hideRooms;
+    this.title = "Rooms List";
+  }
+
+  selectRoom(room: RoomList) {
+    // console.log(room);
+    this.selectedRoom = room;
+  }
+
+  addRoom() {
+    const room: RoomList = {
+      roomNumber: 4,
+      roomType: 'Deluxe Room',
+      amenities: 'Air Conditioner, Free Wi-Fi, TV, Bathroom, Kichen',
+      price: 500,
+      photos: '',
+      checkinTime: new Date('11-Nov-2021'),
+      checkoutTime: new Date('12-Nov-2021'),
+      rating: 4.5
+    };
+
+    // this.roomList.push(room);
+    this.roomList = [ ...this.roomList, room ];
   }
 }
