@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpEventType } from '@angular/common/http';
 import { AfterViewChecked, AfterViewInit, Component, DoCheck, OnInit, QueryList, SkipSelf, ViewChild, ViewChildren } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
@@ -8,7 +9,7 @@ import { RoomsService } from './services/rooms.service';
 
 @Component({
   selector: 'app-rooms',
-  imports: [CommonModule, HeaderComponent, RoomsListComponent],
+  imports: [ CommonModule, HeaderComponent, RoomsListComponent ],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.scss'
 })
@@ -19,7 +20,7 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
   // Property Binding (Texto Vinculativo) 
   numberOfRooms = 10;
 
-  hideRooms = false;
+  hideRooms = true;
 
   selectedRoom!: RoomList;
 
@@ -47,6 +48,10 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
   @ViewChildren(HeaderComponent) headerChildrenComponent!: QueryList<HeaderComponent>;
 
   // roomService = new RoomsService();
+
+  error: string = '';
+
+  totalbytes: number = 0;
 
   constructor(@SkipSelf() private roomsService: RoomsService) {
 
@@ -96,6 +101,33 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
 
     // this.stream.subscribe((data)=> console.log(data));
 
+    // this.roomsService.getPhotos().subscribe((data) => {
+    //   console.log(data);
+    // })
+
+    this.roomsService.getPhotos().subscribe((event) => {
+      switch(event.type) {
+        case HttpEventType.Sent: {
+          console.log('Request has been made!');
+          break;
+        }
+        
+        case HttpEventType.ResponseHeader: {
+          console.log('Request Success!');
+          break;
+        }
+        
+        case HttpEventType.DownloadProgress: {
+          this.totalbytes += event.loaded;
+          break;
+        }
+
+        case HttpEventType.Response: {
+          console.log(event.body);
+        }
+      }
+    })
+
     console.log(this.roomsService.getRooms());
 
     this.stream.subscribe({
@@ -104,7 +136,10 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
       error: (err) => console.log(err),
     });
 
-    this.roomsService.getRooms().subscribe(rooms => {
+    this.stream.subscribe((data) => console.log(data));
+
+    // this.roomsService.getRooms$.subscribe(rooms => {
+      this.roomsService.getRooms().subscribe(rooms => {
       this.roomList = rooms;
     })
   }
@@ -140,7 +175,7 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
 
   addRoom() {
     const room: RoomList = {
-      roomNumber: '4',
+      // roomNumber: '4',
       roomType: 'Deluxe Room',
       amenities: 'Air Conditioner, Free Wi-Fi, TV, Bathroom, Kichen',
       price: 500,
@@ -151,7 +186,34 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
     };
 
     // this.roomList.push(room);
-    this.roomList = [ ...this.roomList, room ];
+    // this.roomList = [ ...this.roomList, room ];
+
+    this.roomsService.addRoom(room).subscribe((data) => {
+      this.roomList = data;
+    })
+  }
+
+  editRoom() {
+    const room: RoomList = {
+      roomNumber: '3',
+      roomType: 'Deluxe Room',
+      amenities: 'Air Conditioner, Free Wi-Fi, TV, Bathroom, Kichen',
+      price: 500,
+      photos: '',
+      checkinTime: new Date('11-Nov-2021'),
+      checkoutTime: new Date('12-Nov-2021'),
+      rating: 4.5
+    };
+
+    this.roomsService.editRoom(room).subscribe((data) => {
+      this.roomList = data;
+    });
+  }
+
+  deleteRoom() {
+    this.roomsService.delete('3').subscribe((data) => {
+      this.roomList = data;
+    })
   }
 }
 
