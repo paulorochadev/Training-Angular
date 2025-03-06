@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewChecked, AfterViewInit, Component, DoCheck, OnInit, QueryList, SkipSelf, ViewChild, ViewChildren } from '@angular/core';
+import { Observable } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { RoomsListComponent } from "../rooms-list/rooms-list.component";
 import { Room, RoomList } from './rooms';
@@ -31,6 +32,14 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
   title = 'Room List';
 
   roomList: RoomList[] = []
+
+  stream = new Observable<string>(observer => {
+    observer.next('user1');
+    observer.next('user2');
+    observer.next('user3');
+    observer.complete();
+    // observer.error('error');
+  });
 
   // @ViewChild(HeaderComponent, { static: true }) headerComponent!: HeaderComponent;
   @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
@@ -83,7 +92,21 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
     //   },
     // ]
 
-    this.roomList = this.roomsService.getRooms();
+    // this.roomList = this.roomsService.getRooms();
+
+    // this.stream.subscribe((data)=> console.log(data));
+
+    console.log(this.roomsService.getRooms());
+
+    this.stream.subscribe({
+      next: (value) => console.log(value),
+      complete: () => console.log('complete'),
+      error: (err) => console.log(err),
+    });
+
+    this.roomsService.getRooms().subscribe(rooms => {
+      this.roomList = rooms;
+    })
   }
 
   ngDoCheck(): void {
@@ -117,7 +140,7 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
 
   addRoom() {
     const room: RoomList = {
-      roomNumber: 4,
+      roomNumber: '4',
       roomType: 'Deluxe Room',
       amenities: 'Air Conditioner, Free Wi-Fi, TV, Bathroom, Kichen',
       price: 500,
@@ -131,3 +154,7 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
     this.roomList = [ ...this.roomList, room ];
   }
 }
+
+// getData -> addData -> getData
+
+// getData -> continous stream of data -> addData
