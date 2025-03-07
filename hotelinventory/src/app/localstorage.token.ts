@@ -1,9 +1,9 @@
 import { InjectionToken } from "@angular/core";
+import { LocalStorage } from "./localstorage.interface";
 
-export const LocalStorageToken = new InjectionToken<any>('local storage', {
+export const LocalStorageToken = new InjectionToken<LocalStorage>('local storage', {
     providedIn: 'root',
     factory() {
         return localStorage;
-        // return sessionStorage;
     }
-})
+});

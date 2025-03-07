@@ -1,39 +1,39 @@
 <p>rooms-list works!</p>
 
-<!-- Rooms List -->
-<!-- {{ roomList }} -->
-
 <h2>{{ title }}</h2>
 
 <table>
-    <tr>
-        <th>Index</th>
-        <th>Even/Odd</th>
-        <th>Room Number</th>
-        <th>Room Type</th>
-        <th>Room Price</th>
-        <th>Room Amenities</th>
-        <th>Checkin Time</th>
-        <th>Checkout Time</th>
-        <th>Rating</th>
-        <th>Select Room</th>
-    </tr>
-    <tr [ngClass]="e ? 'even' : 'odd'"
-        *ngFor="let room of rooms; let e = even; let o = odd; let i = index"
-    >
-        <td>{{ i }}</td>
-        <td>{{ e ? "Even" : "Odd" }}</td>
-        <td>{{ room.roomNumber }}</td>
-        <td>{{ room.roomType }}</td>
-        <td>{{ room.price | currency : 'EUR' }}</td>
-        <td>{{ room.amenities | titlecase }}</td>
-        <td>{{ room.checkinTime | date: 'dd/MM/yyyy' }}</td>
-        <td>{{ room.checkoutTime | date: 'dd/MM/yyyy' }}</td>
-        <td>{{ room.rating | number : '1.1-2' }}</td>
-        <td>
-            <button class="btn btn-pimary" (click)="selectRoom(room)">
-                Select
-            </button>
-        </td>
-    </tr>
+    <thead>
+        <tr>
+            <th scope="col">Index</th>
+            <th scope="col">Even/Odd</th>
+            <th scope="col">Room Number</th>
+            <th scope="col">Room Type</th>
+            <th scope="col">Room Price</th>
+            <th scope="col">Room Amenities</th>
+            <th scope="col">Checkin Time</th>
+            <th scope="col">Checkout Time</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Select Room</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr [ngClass]="e ? 'even' : 'odd'"
+            *ngFor="let room of rooms; let e = even; let i = index">
+            <td scope="row">{{ i }}</td>
+            <td>{{ e ? "Even" : "Odd" }}</td>
+            <td>{{ room.roomNumber }}</td>
+            <td>{{ room.roomType }}</td>
+            <td>{{ room.price | currency : 'EUR' }}</td>
+            <td>{{ room.amenities | titlecase }}</td>
+            <td>{{ room.checkinTime | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ room.checkoutTime | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ room.rating | number : '1.1-2' }}</td>
+            <td>
+                <button class="select-room-button" (click)="selectRoom(room)" aria-label="Selecionar quarto">
+                    Selecionar
+                </button>
+            </td>
+        </tr>
+    </tbody>
 </table>

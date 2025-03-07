@@ -1,88 +1,60 @@
-import { HttpClient, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { Observable, catchError, shareReplay, throwError } from 'rxjs';
 import { AppConfig } from '../../AppConfig/appConfig.interface';
 import { APP_SERVICE_CONFIG } from '../../AppConfig/appConfig.service';
 import { RoomList } from '../rooms';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class RoomsService {
+    roomList: RoomList[] = [];
 
-  // roomList: RoomList[] = [
-  //   {
-  //     roomNumber: 1,
-  //     roomType: 'Deluxe Room',
-  //     amenities: 'Air Conditioner, Free Wi-Fi, TV, Bathroom, Kichen',
-  //     price: 500,
-  //     photos: 'testPhotos',
-  //     checkinTime: new Date('11-Nov-2021'),
-  //     checkoutTime: new Date('12-Nov-2021'),
-  //     rating: 4.5,
-  //   },
-  //   {
-  //     roomNumber: 2,
-  //     roomType: 'Deluxe Room',
-  //     amenities: 'Air Conditioner, Free Wi-Fi, TV, Bathroom, Kichen',
-  //     price: 1000,
-  //     photos: 'testPhotos2',
-  //     checkinTime: new Date('11-Nov-2021'),
-  //     checkoutTime: new Date('12-Nov-2021'),
-  //     rating: 3.45654,
-  //   },
-  //   {
-  //     roomNumber: 3,
-  //     roomType: 'Private Suite',
-  //     amenities: 'Air Conditioner, Free Wi-Fi, TV, Bathroom, Kichen',
-  //     price: 15000,
-  //     photos: 'testPhotos3',
-  //     checkinTime: new Date('11-Nov-2021'),
-  //     checkoutTime: new Date('12-Nov-2021'),
-  //     rating: 2.6,
-  //   },
-  // ]
+    constructor(@Inject(APP_SERVICE_CONFIG) private config: AppConfig, private _http: HttpClient) {
+        console.log('Rooms Service Initialized...');
+        console.log('API Endpoint:', this.config.apiEndpoint);
+    }
 
-  roomList: RoomList[] = [];
+    getRooms(): Observable<RoomList[]> {
+        const headers = new HttpHeaders({ 'token': '123456789ABCDE' });
+        return this._http.get<RoomList[]>(`${this.config.apiEndpoint}/rooms`, { headers: headers }).pipe(
+            shareReplay(1),
+            catchError(this.handleError)
+        );
+    }
 
-  // getRooms$ = this.http.get<RoomList[]>('/api/rooms').pipe(
-  //   shareReplay(1)
-  // );
+    addRoom(room: RoomList): Observable<RoomList[]> {
+        return this._http.post<RoomList[]>(`${this.config.apiEndpoint}/rooms`, room).pipe(
+            catchError(this.handleError)
+        );
+    }
 
-  constructor(@Inject(APP_SERVICE_CONFIG) private config: AppConfig, private http: HttpClient) { 
-    console.log('Rooms Service Initialized...');
-    // console.log(environment.apiEndpoint);
-    console.log(this.config.apiEndpoint);
-  }
+    editRoom(room: RoomList): Observable<RoomList[]> {
+        return this._http.put<RoomList[]>(`${this.config.apiEndpoint}/rooms/${room.roomNumber}`, room).pipe(
+            catchError(this.handleError)
+        );
+    }
 
-  // getRooms() {
-  //   return this.roomList;
-  // }
+    delete(id: string): Observable<RoomList[]> {
+        return this._http.delete<RoomList[]>(`${this.config.apiEndpoint}/rooms/${id}`).pipe(
+            catchError(this.handleError)
+        );
+    }
 
-  getRooms() {
-    return this.http.get<RoomList[]>('/api/rooms');
-  }
+    getPhotos(): Observable<HttpEvent<any>> {
+        const request = new HttpRequest(
+            'GET',
+            'https://jsonplaceholder.typicode.com/photos',
+            { reportProgress: true }
+        );
+        return this._http.request(request).pipe(
+            catchError(this.handleError)
+        );
+    }
 
-  addRoom(room: RoomList) {
-    return this.http.post<RoomList[]>('/api/rooms', room);
-  }
-
-  editRoom(room: RoomList) {
-    return this.http.put<RoomList[]>(`/api/rooms/${room.roomNumber}`, room);
-  }
-
-  delete(id: string) {
-    return this.http.delete<RoomList[]>(`/api/rooms/${id}`);
-  }
-
-  getPhotos() {
-    const request = new HttpRequest(
-      'GET',
-      `https://jsonplaceholder.typicode.com/photos`,
-      {
-        reportProgress: true,
-      }
-    );
-
-    return this.http.request(request);
-  }
+    private handleError(error: any) {
+        console.error('An error occurred:', error);
+        return throwError(() => new Error('Something went wrong; please try again later.'));
+    }
 }

@@ -1,3 +1,10 @@
 <p>employee works!</p>
 
-{{ empName }}
+<p>Employee Name: {{ empName }}</p>
+
+<h2>Rooms:</h2>
+<ul>
+    <li *ngFor="let room of rooms">
+        {{ room.roomType }} - {{ room.price }}
+    </li>
+</ul>
