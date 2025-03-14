@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Inject, OnInit, Optional, ViewChild } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { LocalStorageToken } from './localstorage.token';
 import { LoggerService } from './logger.service';
 import { RoomsComponent } from "./rooms/rooms.component";
 
 @Component({
   selector: 'app-root',
-  imports: [ CommonModule, RoomsComponent],
+  imports: [ CommonModule, RoomsComponent, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   // providers: [
