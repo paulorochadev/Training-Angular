@@ -55,6 +55,12 @@ export class RoomsService {
 
     private handleError(error: any) {
         console.error('An error occurred:', error);
-        return throwError(() => new Error('Something went wrong; please try again later.'));
+        let errorMessage = 'Something went wrong; please try again later.';
+        if (error.error instanceof ErrorEvent) {
+            errorMessage = `Error: ${error.error.message}`;
+        } else if (error.status) {
+            errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+        }
+        return throwError(() => new Error(errorMessage));
     }
 }
